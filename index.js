@@ -89,7 +89,7 @@ function settings() {
 
 function randomBackground() {
   let randIndex = Math.floor(Math.random() * (11 - 1)) + 1;
-  imgIndex = `url(/images/${randIndex}.jpg)`;
+  imgIndex = `url(images/${randIndex}.jpg)`;
   html.style.backgroundImage = imgIndex;
 }
 
