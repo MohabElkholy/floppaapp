@@ -11,13 +11,19 @@ let settingsMenu = document.querySelector(".settingsMenu");
 let musicBtn = document.querySelector(".musicBtn");
 let soundBtn = document.querySelector(".soundBtn");
 let audio = document.querySelector("audio");
+let overlay = document.querySelector(".overlay-black");
+let main = document.querySelector("main");
+let showFalseButton;
+let backButton;
 
 let score = 0;
 let quistions = [];
-let i = 0;
+let i = -1;
 let imgIndex;
 let playSound = true;
 const clickSound = new Audio("sounds/click.wav");
+let falseQuistions = [];
+let uniqueNumbers = [];
 
 fetch("./data.json")
   .then((response) => response.json())
@@ -55,6 +61,18 @@ let randomIndex = randomChoice();
 
 buttons[1].setAttribute("id", "true");
 
+function randomQutiosnIndex() {
+  while (uniqueNumbers.length < quistions.length) {
+    let randomNumber = Math.floor(Math.random() * quistions.length);
+    if (!uniqueNumbers.includes(randomNumber)) {
+      uniqueNumbers.push(randomNumber);
+    }
+  }
+}
+setTimeout(() => {
+  randomQutiosnIndex();
+}, 3000);
+
 function fadeIn() {
   h2.style.opacity = 1;
   qustionsButtonsSection.style.opacity = 1;
@@ -76,7 +94,10 @@ function settings() {
     musicBtn.classList.toggle("off");
     if (audio.muted === false) {
       audio.muted = true;
-    } else audio.muted = false;
+    } else {
+      audio.muted = false;
+      audio.play();
+    }
   });
   soundBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -107,11 +128,9 @@ function start() {
 }
 
 function end() {
-  console.log(
-    `lenght is ${quistions.length} score is ${score} befote else num ${
-      Math.floor((quistions.length + 1) / 2) - 1
-    }`
-  );
+  overlay.classList.add("show");
+  main.classList.add("z4");
+
   if (score === quistions.length + 1) {
     qustionsButtonsSection.innerHTML = "";
     quistionTitle.innerHTML = "";
@@ -127,8 +146,7 @@ function end() {
     quistionTitle.innerHTML = "";
     h2.innerHTML = `جيد جدا! لقد جاوبت علي اغلب الاسئلة بشكل صحيح بجموع نقاط يساوي ${score} نقطه`;
 
-    qustionsButtonsSection.innerHTML =
-      "<p>انت تعرف الكثير عن فلوبا عمل جيد</p>";
+    qustionsButtonsSection.innerHTML = `<p>انت تعرف الكثير عن فلوبا عمل جيد</p><button class="showFalse">الاسئلة الخطأ</button>`;
   } else if (
     score === quistions.length + 1 - 4 ||
     score === quistions.length + 1 - 5
@@ -137,7 +155,7 @@ function end() {
     quistionTitle.innerHTML = "";
     h2.innerHTML = `مقبول! لقد جاوبت علي عدد قليل من الاسئلة بشكل صحيح بجموع نقاط يساوي ${score} نقطه`;
 
-    qustionsButtonsSection.innerHTML = "<p>تحتاج الي تعلم المزيد عن فلوبا</p>";
+    qustionsButtonsSection.innerHTML = `<p>تحتاج الي تعلم المزيد عن فلوبا</p><button class="showFalse">الاسئلة الخطأ</button>`;
   } else if (
     score <= Math.floor((quistions.length + 1) / 2) - 1 ||
     score <= Math.floor((quistions.length + 1) / 2) + 1
@@ -146,7 +164,7 @@ function end() {
     quistionTitle.innerHTML = "";
     h2.innerHTML = `سيئ! لقد جاوبت علي عدد قليل جدا من الاسئلة بشكل صحيح بجموع نقاط يساوي ${score} نقطه`;
 
-    qustionsButtonsSection.innerHTML = "<p>هل تعرف من هو فلوبا من الاساس ؟</p>";
+    qustionsButtonsSection.innerHTML = `<p>هل تعرف من هو فلوبا من الاساس ؟</p><button class="showFalse">الاسئلة الخطأ</button>`;
   } else {
     qustionsButtonsSection.innerHTML = "";
     quistionTitle.innerHTML = "";
@@ -155,6 +173,8 @@ function end() {
     qustionsButtonsSection.innerHTML = "<p>الرجاء المحاوله مره اخري</p>";
   }
 
+  showFalseButton = document.querySelector(".showFalse");
+  showFalse();
   setInterval(randomBackground, 3000);
 }
 
@@ -168,11 +188,11 @@ function next(index) {
   } else {
     fadeOut();
     setTimeout(() => {
-      h2.innerHTML = quistions[index - 1].title;
-      buttons[randomIndex[0]].innerHTML = quistions[index - 1].true;
+      h2.innerHTML = quistions[index].title;
+      buttons[randomIndex[0]].innerHTML = quistions[index].true;
       buttons[randomIndex[0]].setAttribute("id", "true");
-      buttons[randomIndex[1]].innerHTML = quistions[index - 1].btn2;
-      buttons[randomIndex[2]].innerHTML = quistions[index - 1].btn3;
+      buttons[randomIndex[1]].innerHTML = quistions[index].btn2;
+      buttons[randomIndex[2]].innerHTML = quistions[index].btn3;
     }, 515);
   }
 }
@@ -180,9 +200,6 @@ function next(index) {
 function onClick() {
   buttons.forEach((button) => {
     button.addEventListener("click", () => {
-      console.log(
-        `quistoin enght is ${quistions.length} qNum is ${qNum[0].innerHTML}`
-      );
       if (playSound === true) {
         clickSound.play();
       }
@@ -197,20 +214,23 @@ function onClick() {
           i++;
           randomIndex = randomChoice();
 
-          next(i);
+          next(uniqueNumbers[i]);
           randomBackground();
           setTimeout(fadeIn, 500);
 
           qNum[0].innerHTML++;
-          console.log(score);
         } else {
+          if (i === 0) {
+            falseQuistions.push("ما هو سن فلوبا");
+          } else falseQuistions.push(quistions[i - 1].title);
+
           document
             .getElementsByClassName("fristQuistion")[0]
             .setAttribute("id", "");
           i++;
           randomIndex = randomChoice();
 
-          next(i);
+          next(uniqueNumbers[i]);
           randomBackground();
           setTimeout(fadeIn, 500);
 
@@ -221,10 +241,29 @@ function onClick() {
   });
 }
 
+function showFalse() {
+  showFalseButton.addEventListener("click", () => {
+    qustionsButtonsSection.innerHTML = "";
+    quistionTitle.innerHTML = "";
+    h2.innerHTML = "";
+    falseQuistions.forEach((falseQuistion) => {
+      let child = document.createElement("p");
+      child.innerText = falseQuistion;
+      qustionsButtonsSection.appendChild(child);
+    });
+    let child2 = document.createElement("button");
+    child2.innerText = "الرجوع";
+    child2.classList.add("back");
+    qustionsButtonsSection.appendChild(child2);
+    back = document.querySelector(".back");
+    back.addEventListener("click", () => {
+      end();
+    });
+  });
+}
+
 start();
 
 onClick();
 
 settings();
-
-audio.onload = audio.play();
