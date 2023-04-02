@@ -139,6 +139,7 @@ function end() {
     qustionsButtonsSection.innerHTML =
       "<p>انت من اكبر معجبين فلوبا وتتمني لقائه</p>";
   } else if (
+    score === quistions.length + 1 - 1 ||
     score === quistions.length + 1 - 2 ||
     score === quistions.length + 1 - 3
   ) {
@@ -156,10 +157,7 @@ function end() {
     h2.innerHTML = `مقبول! لقد جاوبت علي عدد قليل من الاسئلة بشكل صحيح بجموع نقاط يساوي ${score} نقطه`;
 
     qustionsButtonsSection.innerHTML = `<p>تحتاج الي تعلم المزيد عن فلوبا</p><button class="showFalse">الاسئلة الخطأ</button>`;
-  } else if (
-    score <= Math.floor((quistions.length + 1) / 2) - 1 ||
-    score <= Math.floor((quistions.length + 1) / 2) + 1
-  ) {
+  } else if (score <= Math.floor((quistions.length + 1) / 2)) {
     qustionsButtonsSection.innerHTML = "";
     quistionTitle.innerHTML = "";
     h2.innerHTML = `سيئ! لقد جاوبت علي عدد قليل جدا من الاسئلة بشكل صحيح بجموع نقاط يساوي ${score} نقطه`;
@@ -242,24 +240,26 @@ function onClick() {
 }
 
 function showFalse() {
-  showFalseButton.addEventListener("click", () => {
-    qustionsButtonsSection.innerHTML = "";
-    quistionTitle.innerHTML = "";
-    h2.innerHTML = "";
-    falseQuistions.forEach((falseQuistion) => {
-      let child = document.createElement("p");
-      child.innerText = falseQuistion;
-      qustionsButtonsSection.appendChild(child);
+  if (falseQuistions.length > 0) {
+    showFalseButton.addEventListener("click", () => {
+      qustionsButtonsSection.innerHTML = "";
+      quistionTitle.innerHTML = "";
+      h2.innerHTML = "";
+      falseQuistions.forEach((falseQuistion) => {
+        let child = document.createElement("p");
+        child.innerText = falseQuistion;
+        qustionsButtonsSection.appendChild(child);
+      });
+      let child2 = document.createElement("button");
+      child2.innerText = "الرجوع";
+      child2.classList.add("back");
+      qustionsButtonsSection.appendChild(child2);
+      back = document.querySelector(".back");
+      back.addEventListener("click", () => {
+        end();
+      });
     });
-    let child2 = document.createElement("button");
-    child2.innerText = "الرجوع";
-    child2.classList.add("back");
-    qustionsButtonsSection.appendChild(child2);
-    back = document.querySelector(".back");
-    back.addEventListener("click", () => {
-      end();
-    });
-  });
+  }
 }
 
 start();
