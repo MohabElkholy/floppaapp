@@ -69,7 +69,7 @@ button {
   color: #fff;
   font-weight: 700;
   font-size: 1.5rem;
-  background: rgb(64, 192, 87);
+  background: #40c057;
   background: linear-gradient(
     45deg,
     rgba(64, 192, 87, 1) 0%,
@@ -252,4 +252,47 @@ h3 {
 .show {
   visibility: visible;
   opacity: 1;
+}
+
+.loadingScreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background-color: wheat;
+  display: flex;
+}
+
+.spin::before {
+  animation: 1.5s linear infinite spinner;
+  animation-play-state: inherit;
+  border: solid 5px rgba(64, 192, 87, 0.3);
+  border-bottom-color: #40c057;
+  border-radius: 50%;
+  content: "";
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  transform: translate3d(-50%, -50%, 0);
+  width: 40px;
+  will-change: transform;
+}
+
+@keyframes spinner {
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+}
+
+.hide {
+  visibility: hidden;
+  opacity: 0;
 }
