@@ -13,6 +13,7 @@ let soundBtn = document.querySelector(".soundBtn");
 let audio = document.querySelector("audio");
 let overlay = document.querySelector(".overlay-black");
 let main = document.querySelector("main");
+let loadingScreen = document.querySelector(".loadingScreen");
 let showFalseButton;
 let backButton;
 
@@ -73,6 +74,10 @@ setTimeout(() => {
   randomQutiosnIndex();
 }, 3000);
 
+setTimeout(() => {
+  loadingScreen.classList.add("hide");
+}, 2500);
+
 function fadeIn() {
   h2.style.opacity = 1;
   qustionsButtonsSection.style.opacity = 1;
@@ -109,7 +114,7 @@ function settings() {
 }
 
 function randomBackground() {
-  let randIndex = Math.floor(Math.random() * (11 - 1)) + 1;
+  let randIndex = Math.floor(Math.random() * (16 - 1)) + 1;
   imgIndex = `url(images/${randIndex}.jpg)`;
   html.style.backgroundImage = imgIndex;
 }
@@ -218,9 +223,9 @@ function onClick() {
 
           qNum[0].innerHTML++;
         } else {
-          if (i === 0) {
+          if (i === -1) {
             falseQuistions.push("ما هو سن فلوبا");
-          } else falseQuistions.push(quistions[i - 1].title);
+          } else falseQuistions.push(quistions[uniqueNumbers[i]].title);
 
           document
             .getElementsByClassName("fristQuistion")[0]
